@@ -64,7 +64,7 @@ class Utilities(commands.Cog):
         embed.add_field(name="League of Legends", value="More to come", inline=False)
         embed.set_thumbnail(url=member.avatar.url)
         embed.set_footer(
-            text="Does your mom know you have that avatar?",
+            text="Does your mom know you have that avatar?",  # todo: easter eggs
             icon_url=self.bot.user.avatar.url,
         )
 
