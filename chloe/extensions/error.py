@@ -33,7 +33,9 @@ class Error(commands.Cog):
                     "{ctx.command} can only be used in a server.",
                 )
             except discord.HTTPException:  # edge case of the century
-                self.logger.warning("A guild-only command in DMs was used, but the bot cannot reject it.")
+                self.logger.warning(
+                    "A guild-only command in DMs was used, but the bot cannot reject it.",
+                )
         elif isinstance(error, invalid_perms):
             return await ctx.send("Nope.")
 

@@ -1,7 +1,7 @@
 <img width="150" align="right" alt="yaris" src="https://cdn.discordapp.com/attachments/942564255704682496/1049488483942674452/4d9c3a2aa238aeb4d9f3f8acbe56b869_1.png">
 
 ## yaris [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/jacksonisiah/yaris/master.svg)](https://results.pre-commit.ci/latest/github/jacksonisiah/yaris/master) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/1c8eeecdcc744c65b45003002e0a0d43)](https://www.codacy.com/gh/jacksonisiah/yaris/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jacksonisiah/yaris&amp;utm_campaign=Badge_Grade)
-[Command Reference](https://github.com/jacksonisiah/yaris/wiki/Commands) 
+[Command Reference](https://github.com/jacksonisiah/yaris/wiki/Commands)
 
 The source behind Chloe, currently serving Circle People and my personal server.
 
