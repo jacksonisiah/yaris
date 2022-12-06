@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+    chloe:
+        build:
+            context: ..
+            dockerfile: ./docker/Dockerfile
+        volumes:
+            - ../:/app/
+        working_dir: /app
+        entrypoint: ["python", "main.py"]

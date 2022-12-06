@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "chloe"
+version = "2022.12.2"
+description = "Jackson's Custom Purpose Discord Bot"
+authors = ["Jackson Isaiah <jackson@catfile.me>"]
+license = "ISC"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+discord-py = {extras = ["voice"], version = "^2.1.0"}
+python-dotenv = "^0.21.0"
+jishaku = "^2.5.1"
+sentry-sdk = "^1.11.1"
+
+[tool.poetry.group.dev.dependencies]
+black = "^22.10.0"
+mypy = "^0.991"
+
+[tool.mypy]
+mypy_path = "./"
+ignore_missing_imports = true
+no_implicit_optional = false
+check_untyped_defs = true
+warn_unused_ignores = true
+show_error_codes = true
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
