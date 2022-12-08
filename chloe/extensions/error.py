@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
 
 import discord
 from discord.ext import commands
@@ -14,35 +13,38 @@ class Error(commands.Cog):
         self.logger = logging.getLogger("discord")
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx: commands.Context, error: Any):
+    async def on_command_error(self, ctx: commands.Context, e: commands.CommandError):
         # ignore if a custom handler is present
         if hasattr(ctx.command, "on_error"):
             return
 
-        error = getattr(error, "original", error)
+        e = getattr(e, "original", e)
         ignored = (commands.CommandNotFound, commands.UserInputError)
-        invalid_perms = (commands.MissingPermissions, commands.NotOwner)
+        invalid_perms = (
+            commands.MissingPermissions,
+            commands.NotOwner,
+            commands.CheckFailure,
+        )
 
-        if isinstance(error, ignored):
+        if isinstance(e, ignored):
             return
-        elif isinstance(error, commands.DisabledCommand):
+        elif isinstance(e, commands.DisabledCommand):
             return await ctx.send(f"{ctx.command} is disabled.")
-        elif isinstance(error, commands.NoPrivateMessage):
+        elif isinstance(e, commands.NoPrivateMessage):
             try:
                 return await ctx.author.send(
-                    "{ctx.command} can only be used in a server.",
+                    f"{ctx.command} can only be used in a server.",
                 )
             except discord.HTTPException:  # edge case of the century
                 self.logger.warning(
                     "A guild-only command in DMs was used, but the bot cannot reject it.",
                 )
-        elif isinstance(error, invalid_perms):
+        elif isinstance(e, invalid_perms):
             return await ctx.send("Nope.")
 
         # something actually went wrong
-        await ctx.send("Something went wrong, we have been notified about it.")
-
-        self.logger.error(error)
+        self.logger.error(e, exc_info=True)
+        await ctx.send("You broke something, and it has been reported.")
 
 
 async def setup(bot: commands.Bot):

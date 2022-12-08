@@ -44,6 +44,9 @@ class CirclePeople(commands.Cog):
         This is a raw method to avoid an edge case when reacting to a message that came before the bot was started.
         Normal on_reaction_add will completely ignore a message if it is not in the cache.
         """
+        if self.SERVER_ID == 0:
+            return  # apparently this method will still call even if the cog is not loaded?
+
         origin = await self.bot.fetch_channel(payload.channel_id)
         queue = await self.bot.fetch_channel(self.UPLOAD_QUEUE_ID)
         if not isinstance(origin, discord.TextChannel):

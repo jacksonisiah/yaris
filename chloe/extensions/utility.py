@@ -6,6 +6,8 @@ from typing import Optional
 import discord
 from discord.ext import commands
 
+from chloe.models import Guild
+
 
 class Utilities(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -33,6 +35,7 @@ class Utilities(commands.Cog):
     @commands.guild_only()
     @commands.hybrid_command("profile")
     async def profile(self, ctx: commands.Context, member: Optional[discord.Member]):
+        global status
         member = ctx.author if member is None else member
 
         if member.nick:
@@ -42,7 +45,6 @@ class Utilities(commands.Cog):
         if member.guild_permissions.administrator:
             title += " 🌠"
 
-        status = member.status.__str__()
         if member.activity:
             if member.activity.type == discord.ActivityType.listening:
                 status = f"listening to `{member.activity.title}` by `{member.activity.artist}`"
@@ -50,6 +52,8 @@ class Utilities(commands.Cog):
                 status = f"playing `{member.activity.name}`"
         elif member.status == discord.Status.dnd:
             status = "`do not disturb`"
+        else:
+            status = f"`{member.status.__str__()}`"
 
         time: str = (
             calendar.timegm(member.joined_at.utctimetuple()) if not None else "never"
@@ -73,16 +77,16 @@ class Utilities(commands.Cog):
     @commands.guild_only()
     @commands.hybrid_command("server")
     async def server(self, ctx: commands.Context):
-        if not isinstance(ctx.guild, discord.Guild):
-            return
-
         guild = ctx.guild
+        guild_db = await Guild.filter(guild_id=ctx.guild.id).first()
+
         embed = discord.Embed(
             title=guild.name,
             description=f"{guild.member_count} members, {len(guild.channels)} channels\n"
             f"Owner: {guild.owner.mention}\n"
             f"{len(guild.roles)} roles\n"
-            f"Created <t:{calendar.timegm(guild.created_at.utctimetuple())}:R>",
+            f"Created <t:{calendar.timegm(guild.created_at.utctimetuple())}:R>\n"
+            f"Prefix: `{guild_db.prefix}`",
             color=discord.Color.dark_red(),
         )
         embed.set_thumbnail(url=guild.icon.url)

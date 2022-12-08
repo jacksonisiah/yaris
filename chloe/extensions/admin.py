@@ -1,12 +1,17 @@
 from __future__ import annotations
 
+import logging
+
 import discord
 from discord.ext import commands
+
+from chloe.models import Guild
 
 
 class Administration(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
+        self.logger = logging.getLogger("discord")
 
     @commands.is_owner()
     @commands.command(name="sync", hidden=True)
@@ -21,13 +26,15 @@ class Administration(commands.Cog):
 
     @commands.is_owner()
     @commands.command(name="forceleave", hidden=True)
-    async def force_leave(self, ctx: commands.Context, guild_id: int):
+    async def force_leave(self, ctx: commands.Context, guild_id: int = None):
+        guild_id = ctx.guild.id if guild_id is None else guild_id
         try:
             guild = await self.bot.fetch_guild(guild_id)
             await guild.leave()
-            await ctx.send(f"Left server {guild.name}")
+            self.logger.info(f"Force left guild: {ctx.guild.name}")
         except discord.HTTPException as e:
-            await ctx.send(f"Leaving guild failed: {e}")
+            self.logger.error(f"Leaving guild failed: {e}")
+            await ctx.send("Nope.")
 
 
 async def setup(bot: commands.Bot):
