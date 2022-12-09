@@ -12,9 +12,11 @@ from typing import Any
 import discord
 from discord.ext import commands
 
+from chloe.chloe import Chloe
+
 
 class CirclePeople(commands.Cog):
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: Chloe):
         self.bot = bot
         self.SERVER_ID: int = int(os.getenv("SERVER_ID", 0))
         self.SCOREPOST_USER_ID: int = int(os.getenv("SCOREPOST_USER_ID", 0))
@@ -98,6 +100,6 @@ class CirclePeople(commands.Cog):
         await ctx.send(f"https://assets.ppy.sh/beatmaps/{message}/covers/fullsize.jpg")
 
 
-async def setup(bot: commands.Bot):
+async def setup(bot: Chloe):
     if os.getenv("SERVER_ID", 0) != 0:
         await bot.add_cog(CirclePeople(bot))

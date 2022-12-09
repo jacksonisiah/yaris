@@ -6,10 +6,10 @@ import tortoise
 from dotenv import dotenv_values
 from tortoise import Tortoise
 
-config = dotenv_values(".env")
+_config = dotenv_values(".env")
 
 database_config = {
-    "connections": {"default": config.get("DB_CONNECTION")},
+    "connections": {"default": _config.get("DB_CONNECTION")},
     "apps": {
         "models": {
             "models": ["chloe.models", "aerich.models"],

@@ -6,15 +6,17 @@ from typing import Optional
 import discord
 from discord.ext import commands
 
+from chloe.chloe import Chloe
 from chloe.models import Guild
 
 
 class Utilities(commands.Cog):
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: Chloe):
         self.bot = bot
 
     @commands.hybrid_command("help")
     async def help(self, ctx: commands.Context):
+        # todo: refactor this as a proper HelpCommand object
         await ctx.send(
             embed=discord.Embed(
                 title="Get Help",
@@ -22,6 +24,7 @@ class Utilities(commands.Cog):
                 color=discord.Color.dark_red(),
             ),
         )
+        return commands.HelpCommand()
 
     @commands.has_permissions(manage_messages=True)
     @commands.command("cleanup")
@@ -35,7 +38,6 @@ class Utilities(commands.Cog):
     @commands.guild_only()
     @commands.hybrid_command("profile")
     async def profile(self, ctx: commands.Context, member: Optional[discord.Member]):
-        global status
         member = ctx.author if member is None else member
 
         if member.nick:
@@ -45,6 +47,7 @@ class Utilities(commands.Cog):
         if member.guild_permissions.administrator:
             title += " 🌠"
 
+        status = ""
         if member.activity:
             if member.activity.type == discord.ActivityType.listening:
                 status = f"listening to `{member.activity.title}` by `{member.activity.artist}`"
@@ -95,5 +98,5 @@ class Utilities(commands.Cog):
         await ctx.send(embed=embed)
 
 
-async def setup(bot: commands.Bot):
+async def setup(bot: Chloe):
     await bot.add_cog(Utilities(bot))
