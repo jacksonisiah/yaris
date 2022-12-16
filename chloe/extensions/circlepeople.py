@@ -91,13 +91,17 @@ class CirclePeople(commands.Cog):
 
         await queue.send(f"<@&{self.UPLOADER_ID}>", embed=embed)
 
+    """
+    Helper commands for thumbnail creation.
+    """
+
     @commands.hybrid_command(name="osuava")
-    async def osu_avatar(self, ctx: commands.Context, message: discord.Message):
-        await ctx.send(f"https://a.ppy.sh/{message}")
+    async def osu_avatar(self, ctx: commands.Context, uid: str):
+        await ctx.send(f"https://a.ppy.sh/{uid}")
 
     @commands.hybrid_command(name="osubg")
-    async def osu_bg(self, ctx: commands.Context, message: discord.Message):
-        await ctx.send(f"https://assets.ppy.sh/beatmaps/{message}/covers/fullsize.jpg")
+    async def osu_bg(self, ctx: commands.Context, bgid: str):
+        await ctx.send(f"https://assets.ppy.sh/beatmaps/{bgid}/covers/fullsize.jpg")
 
 
 async def setup(bot: Chloe):

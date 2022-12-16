@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 
 import tortoise
@@ -7,9 +8,11 @@ from dotenv import dotenv_values
 from tortoise import Tortoise
 
 _config = dotenv_values(".env")
-
 database_config = {
-    "connections": {"default": _config.get("DB_CONNECTION")},
+    "connections": {
+        "default": f"postgres://{_config.get('PG_USER')}:{_config.get('PG_PASS')}@{_config.get('PG_HOST')}:"
+        f"{_config.get('PG_PORT')}/chloe",
+    },
     "apps": {
         "models": {
             "models": ["chloe.models", "aerich.models"],
@@ -19,13 +22,19 @@ database_config = {
 }
 
 
-async def initialize_db():
+async def init_database():
     """
     Initializes a connection with a PostgresSQL database
     """
     try:
         await Tortoise.init(database_config)
-    except tortoise.ConfigurationError as e:
+        await Tortoise.generate_schemas()
+    except (ConnectionRefusedError, tortoise.ConfigurationError, OSError) as err:
         logger = logging.getLogger("discord")
-        logger.critical(f"Could not establish database connection: {e}")
+        logger.critical(f"Could not establish database connection: {err}")
         exit(1)
+
+
+def cleanup():
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(Tortoise.close_connections())

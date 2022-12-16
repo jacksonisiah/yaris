@@ -4,15 +4,17 @@ import asyncio
 import glob
 import logging
 import os
+import signal
+import sys
 from typing import Any
 
 import discord
 import sentry_sdk
 from discord import Intents
 from discord.ext.commands import Bot
-from tortoise import Tortoise
 
-from chloe.database.database import initialize_db
+from chloe.database.database import cleanup
+from chloe.database.database import init_database
 from chloe.models import Guild
 
 
@@ -63,15 +65,9 @@ class Chloe(Bot):
             """,
         )
 
-        # check for blacklisted prefix.
-        blacklist_prefix = ("$", ";")  # pg does not play nice with these prefixes
-        if any(p in os.getenv("PREFIX") for p in blacklist_prefix):
-            self.logger.fatal("Prefix contains an invalid character")
-            exit(0)
+        await init_database()
+        self.loop.create_task(self.after_connect())
 
-        # init database
-        await initialize_db()
-        self.loop.create_task(self.setup_after())
         # Load all extensions
         await self.load_extension("jishaku")
         for pkg in ("tasks", "extensions"):
@@ -83,26 +79,37 @@ class Chloe(Bot):
                 except Exception as e:
                     self.logger.error(e, exc_info=True)
 
-    async def setup_after(self):
+    async def after_connect(self):
         """
         Setup tasks to be performed after connecting to the websocket
         """
         await self.wait_until_ready()
-        # update guild table.
+
+        # Postgres does not play nice with these prefixes
+        blacklist_prefix = ("$", ";")
+        if any(p in os.getenv("PREFIX") for p in blacklist_prefix):
+            self.logger.fatal("Prefix contains an invalid character")
+            exit(0)
+
+        # Populate guild table
+        # todo: repository?
         guilds = 0
         for g in self.guilds:
-            await Guild.update_or_create(
-                guild_id=g.id,
-                name=g.name,
-                owner_id=g.owner.id,
-            )
+            c = await Guild.get_or_none(guild_id=g.id)
+            if c is None:
+                await Guild.create(
+                    guild_id=g.id,
+                    name=g.name,
+                    prefix=os.getenv("PREFIX"),
+                    owner_id=g.owner.id,
+                )
             guilds += 1
         self.logger.info(f"Updated {guilds} guilds")
 
     def run(self, **kwargs: Any):
-        try:
-            super().run(os.getenv("TOKEN", ""), reconnect=True, **kwargs)
-        finally:
-            self.logger.info("Cleaning up database connections and shutting down")
-            close = asyncio.new_event_loop()
-            close.run_until_complete(Tortoise.close_connections())
+        # https://github.com/encode/httpx/issues/914#issuecomment-622586610
+        if sys.platform.startswith("win"):
+            asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
+        signal.signal(signal.SIGTERM, cleanup)
+        super().run(os.getenv("TOKEN", ""), reconnect=True, **kwargs)
