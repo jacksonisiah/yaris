@@ -52,7 +52,7 @@ class Reminder(app_commands.Group):
                 ts = math.floor(r.scheduled.timestamp())
                 reminder_list += f"#{r.id} (<t:{ts}:R>): `{r.content}`\n"
             elif r.scheduled <= pytz.UTC.localize(
-                datetime.datetime(1971, 1, 1, 0, 0, 0),
+                dt=datetime.datetime(1971, 1, 1, 0, 0, 0),
             ):
                 reminder_list += f"#{r.id}: {r.content}\n"
 
@@ -67,15 +67,15 @@ class Reminder(app_commands.Group):
     @app_commands.describe(id="The reminder in question's ID")
     @app_commands.describe(clear="The reminder in question's ID")
     async def delete(
-        self, cmd: discord.Interaction, id: Optional[int], clear: Optional[bool],
+        self, cmd: discord.Interaction, reminder_id: Optional[int], clear: Optional[bool],
     ):
         if clear is True:
             reminders = await ReminderDb.filter(user=cmd.user.id).all()
             for r in reminders:
                 await r.delete()
             return await cmd.response.send_message("Done.")
-        elif id is not None:
-            rdb = await ReminderDb.get_or_none(id=id)
+        elif reminder_id is not None:
+            rdb = await ReminderDb.get_or_none(id=reminder_id)
             if rdb is not None:
                 await rdb.delete()
                 return await cmd.response.send_message("Done.")

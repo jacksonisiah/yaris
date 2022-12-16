@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 import math
 
-from dateutil import parser
 from discord.ext import commands
 from discord.ext import tasks
 

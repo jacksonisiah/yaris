@@ -91,10 +91,7 @@ class CirclePeople(commands.Cog):
 
         await queue.send(f"<@&{self.UPLOADER_ID}>", embed=embed)
 
-    """
-    Helper commands for thumbnail creation.
-    """
-
+    # Helper commands for thumbnail creation.
     @commands.hybrid_command(name="osuava")
     async def osu_avatar(self, ctx: commands.Context, uid: str):
         await ctx.send(f"https://a.ppy.sh/{uid}")
