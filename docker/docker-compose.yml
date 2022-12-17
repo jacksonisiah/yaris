@@ -2,10 +2,14 @@ version: "3"
 
 services:
     chloe:
+        container_name: "chloe_bot"
         build:
             context: ..
-            dockerfile: ./docker/Dockerfile
+            dockerfile: docker/Dockerfile
         volumes:
             - ../:/app/
         working_dir: /app
-        entrypoint: ["python", "main.py"]
+        network_mode: "host"
+        command:
+            -   "aerich upgrade"
+        entrypoint: [ "python", "main.py" ]

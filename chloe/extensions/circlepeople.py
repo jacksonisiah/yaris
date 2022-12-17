@@ -12,9 +12,11 @@ from typing import Any
 import discord
 from discord.ext import commands
 
+from chloe.chloe import Chloe
+
 
 class CirclePeople(commands.Cog):
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: Chloe):
         self.bot = bot
         self.SERVER_ID: int = int(os.getenv("SERVER_ID", 0))
         self.SCOREPOST_USER_ID: int = int(os.getenv("SCOREPOST_USER_ID", 0))
@@ -44,6 +46,9 @@ class CirclePeople(commands.Cog):
         This is a raw method to avoid an edge case when reacting to a message that came before the bot was started.
         Normal on_reaction_add will completely ignore a message if it is not in the cache.
         """
+        if self.SERVER_ID == 0:
+            return  # apparently this method will still call even if the cog is not loaded?
+
         origin = await self.bot.fetch_channel(payload.channel_id)
         queue = await self.bot.fetch_channel(self.UPLOAD_QUEUE_ID)
         if not isinstance(origin, discord.TextChannel):
@@ -86,15 +91,16 @@ class CirclePeople(commands.Cog):
 
         await queue.send(f"<@&{self.UPLOADER_ID}>", embed=embed)
 
+    # Helper commands for thumbnail creation.
     @commands.hybrid_command(name="osuava")
-    async def osu_avatar(self, ctx: commands.Context, message: discord.Message):
-        await ctx.send(f"https://a.ppy.sh/{message}")
+    async def osu_avatar(self, ctx: commands.Context, uid: str):
+        await ctx.send(f"https://a.ppy.sh/{uid}")
 
     @commands.hybrid_command(name="osubg")
-    async def osu_bg(self, ctx: commands.Context, message: discord.Message):
-        await ctx.send(f"https://assets.ppy.sh/beatmaps/{message}/covers/fullsize.jpg")
+    async def osu_bg(self, ctx: commands.Context, bgid: str):
+        await ctx.send(f"https://assets.ppy.sh/beatmaps/{bgid}/covers/fullsize.jpg")
 
 
-async def setup(bot: commands.Bot):
+async def setup(bot: Chloe):
     if os.getenv("SERVER_ID", 0) != 0:
         await bot.add_cog(CirclePeople(bot))
