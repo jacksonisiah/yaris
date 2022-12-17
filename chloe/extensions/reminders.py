@@ -48,13 +48,13 @@ class Reminder(app_commands.Group):
             return await cmd.response.send_message("You have no reminders.")
 
         reminder_list = ""
+        epoch = datetime.datetime(1971, 1, 1, 0, 0, 0)
+        
         for r in rdb:
             if r.scheduled > datetime.datetime.now(pytz.UTC):
                 ts = math.floor(r.scheduled.timestamp())
                 reminder_list += f"#{r.id} (<t:{ts}:R>): `{r.content}`\n"
-            elif r.scheduled <= pytz.UTC.localize(
-                dt=datetime.datetime(1971, 1, 1, 0, 0, 0),
-            ):
+            elif r.scheduled <= pytz.UTC.localize(epoch):
                 reminder_list += f"#{r.id}: {r.content}\n"
 
         embed = discord.Embed(
