@@ -49,7 +49,7 @@ class Reminder(app_commands.Group):
 
         reminder_list = ""
         epoch = datetime.datetime(1971, 1, 1, 0, 0, 0)
-        
+
         for r in rdb:
             if r.scheduled > datetime.datetime.now(pytz.UTC):
                 ts = math.floor(r.scheduled.timestamp())
