@@ -13,7 +13,6 @@ COPY . /app/
 WORKDIR /app
 
 RUN poetry config virtualenvs.create false \
-  && poetry install --no-interaction --no-ansi --only main \
-  && aerich migrate
+  && poetry install --no-interaction --no-ansi --only main
 
 ENTRYPOINT ["python", "./main.py"]

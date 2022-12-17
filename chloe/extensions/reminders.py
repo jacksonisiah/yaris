@@ -28,7 +28,8 @@ class Reminder(app_commands.Group):
         # Parse to future date as utc
         if schedule is not None:
             time = dateparser.parse(
-                schedule, settings={"PREFER_DATES_FROM": "future", "TIMEZONE": "UTC"},
+                schedule,
+                settings={"PREFER_DATES_FROM": "future", "TIMEZONE": "UTC"},
             )
             sch = f" for {schedule}"
 
@@ -64,27 +65,18 @@ class Reminder(app_commands.Group):
         return await cmd.response.send_message(embed=embed)
 
     @app_commands.command(description="Delete a reminder")
-    @app_commands.describe(id="The reminder in question's ID")
-    @app_commands.describe(clear="The reminder in question's ID")
+    @app_commands.describe(reminder_id="The reminder in question's ID")
     async def delete(
-        self, cmd: discord.Interaction, reminder_id: Optional[int], clear: Optional[bool],
+        self,
+        cmd: discord.Interaction,
+        reminder_id: int,
     ):
-        if clear is True:
-            reminders = await ReminderDb.filter(user=cmd.user.id).all()
-            for r in reminders:
-                await r.delete()
+        rdb = await ReminderDb.get_or_none(id=reminder_id)
+        if rdb is not None:
+            await rdb.delete()
             return await cmd.response.send_message("Done.")
-        elif reminder_id is not None:
-            rdb = await ReminderDb.get_or_none(id=reminder_id)
-            if rdb is not None:
-                await rdb.delete()
-                return await cmd.response.send_message("Done.")
-            else:
-                return await cmd.response.send_message("That reminder doesn't exist.")
         else:
-            return await cmd.response.send_message(
-                "You need to provide a reminder to delete.",
-            )
+            return await cmd.response.send_message("That reminder doesn't exist.")
 
     # todo: add confirm step modal
     @app_commands.command(description="Clear all reminders")
