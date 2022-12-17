@@ -35,6 +35,6 @@ async def init_database():
         exit(1)
 
 
-def cleanup():
+def cleanup(_signum, _frame):
     loop = asyncio.get_event_loop()
     loop.run_until_complete(Tortoise.close_connections())

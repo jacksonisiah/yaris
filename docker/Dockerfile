@@ -1,5 +1,9 @@
 FROM python:3.10-slim-bullseye
 
+LABEL org.opencontainers.image.source=https://github.com/jacksonisiah/yaris
+LABEL org.opencontainers.image.description="Chloe"
+LABEL org.opencontainers.image.licenses=ISC
+
 RUN python -m ensurepip --upgrade \
     && apt-get update \
     && apt-get install -y --no-install-recommends curl=7.74.0-1.3+deb11u3 \

@@ -54,7 +54,7 @@ class Reminder(app_commands.Group):
             if r.scheduled > datetime.datetime.now(pytz.UTC):
                 ts = math.floor(r.scheduled.timestamp())
                 reminder_list += f"#{r.id} (<t:{ts}:R>): `{r.content}`\n"
-            elif r.scheduled <= pytz.UTC.localize(epoch):
+            elif r.scheduled <= pytz.UTC.localize(dt=epoch):
                 reminder_list += f"#{r.id}: {r.content}\n"
 
         embed = discord.Embed(
