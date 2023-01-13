@@ -26,7 +26,7 @@ class Chloe(Bot):
                 type=discord.ActivityType.playing,
                 name=os.getenv("STATUS"),
             ),
-            command_prefix=os.getenv("PREFIX", ";"),
+            command_prefix=os.getenv("PREFIX", "."),
             intents=Intents.all(),
             help_command=None,
         )
@@ -39,6 +39,7 @@ class Chloe(Bot):
             guild_id=guild.id,
             name=guild.name,
             owner_id=guild.owner.id,
+            prefix=os.getenv("PREFIX", "."),
         )
 
     @classmethod
