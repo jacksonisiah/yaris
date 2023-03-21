@@ -12,7 +12,7 @@ This project takes security & privacy seriously. While there is no huge budget, 
   - Account takeover or unintended bypassing/manipulation of restrictions
   - Failure in encryption (ex. SSL, passwords)
   - Other notable security or privacy concerns
-- Must be present on the latest development branch, or a relatively recently published release. 
+- Must be present on the latest development branch, or a relatively recently published release.
   - This project is not responsible for other instances/forks. If another entity is running outdated or customized versions, it is best to get in contact with them first.
 - The issue must have a reasonable scope and impact on users.
 

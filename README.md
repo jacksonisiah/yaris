@@ -25,6 +25,6 @@ Run `aerich migrate` to run all neccessary migrations. (if on docker this is alr
 Run `python3 main.py` to start the bot process.
 
 ### license & thanks
-ISC 
+ISC
 
 Thanks to [NiceAesth](https://github.com/NiceAesth) for helping with various things.
